@@ -48,7 +48,7 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
-      {/* Main App Layout (accessible without login) */}
+      {/* Main App Layout */}
       <Route
         path="/*"
         element={
@@ -58,7 +58,6 @@ function App() {
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col overflow-auto">
-              {/* Mobile Navbar */}
               <Navbar
                 toggleSidebar={toggleSidebar}
                 darkMode={darkMode}
