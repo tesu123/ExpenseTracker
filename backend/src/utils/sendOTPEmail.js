@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 const sendOtpEmail = async (to, otp) => {
   try {
     await transporter.sendMail({
-      from: `"Microdome Classes" <${process.env.EMAIL_USER}>`,
+      from: `"Expense Tracker" <${process.env.EMAIL_USER}>`,
       to,
       subject: "Your OTP Code",
       text: `Your One-Time Password is: ${otp}. It is valid for 5 minutes.`,
