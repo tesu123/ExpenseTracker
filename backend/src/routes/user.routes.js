@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import {
   registerUser,
-  verifyOTP,
+  verifyOTPAndCreateUser,
   resendOTP,
   loginUser,
   forgotPassword,
@@ -18,7 +18,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/register").post(registerUser);
-router.route("/verify-otp").post(verifyOTP);
+router.route("/verify-otp").post(verifyOTPAndCreateUser);
 router.route("/resend-otp").post(resendOTP);
 router.route("/login").post(loginUser);
 router.route("/forgot-password").post(forgotPassword);

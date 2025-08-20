@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
@@ -10,14 +10,32 @@ import AboutUs from "./pages/AboutUs";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import { useState, useEffect } from "react";
+import axios from "axios";
+import { login, logout } from "./features/auth/authSlice";
+import { useDispatch } from "react-redux";
+const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function App() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(
     () => window.matchMedia("(prefers-color-scheme: dark)").matches
   );
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  useEffect(() => {
+    axios
+      .get(`${ApiUrl}/users/current-user`, { withCredentials: true })
+      .then((res) => {
+        dispatch(login(res.data.data));
+        navigate("/dashboard");
+      })
+      .catch(() => {
+        dispatch(logout());
+      });
+  }, []);
 
   // Apply dark mode class to <html>
   useEffect(() => {

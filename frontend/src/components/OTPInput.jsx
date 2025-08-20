@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login , logout } from "../features/auth/authSlice";
 import axios from "axios";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -86,7 +86,7 @@ const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint 
         setTimeout(() => {
           dispatch(logout())
           dispatch(login(res.data.data.user));
-          navigate("/");
+          navigate("/dashboard");
         }, 2000);
         }
         if(context === "forgot-password"){
