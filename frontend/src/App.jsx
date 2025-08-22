@@ -5,10 +5,11 @@ import Dashboard from "./pages/Dashboard";
 import Expenses from "./pages/Expenses";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
-import LandingPage from "./pages/LandingPage";
 import AboutUs from "./pages/AboutUs";
 import LoginPage from "./pages/LoginPage";
+import LandingLayout from "./pages/LandingLayout.jsx";
 import SignupPage from "./pages/SignupPage";
+import Footer from "./components/Footer.jsx";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { login, logout } from "./features/auth/authSlice";
@@ -62,7 +63,7 @@ function App() {
   return (
     <Routes>
       {/* Public Pages */}
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<LandingLayout />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 

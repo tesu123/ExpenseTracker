@@ -44,11 +44,10 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* Right Image */}
           <div className="flex-1 flex justify-center md:justify-end">
             <img
-              src={expense}
-              alt="Expense Tracker App"
+              src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png"
+              alt="Team Illustration"
               className="w-64 sm:w-72 md:w-80 lg:w-[22rem] drop-shadow-xl"
             />
           </div>
