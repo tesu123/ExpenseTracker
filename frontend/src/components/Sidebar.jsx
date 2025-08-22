@@ -35,6 +35,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       .post(`${ApiUrl}/users/logout`, {}, { withCredentials: true })
       .then(() => {
         dispatch(logout());
+        toast.success("logout successfull");
         navigate("/");
       })
       .catch(() => {
