@@ -90,14 +90,14 @@
 
 // export default AboutUs;
 
-import { FaLinkedin, FaInstagram, FaEnvelope, FaGlobe } from "react-icons/fa";
+import { Linkedin, Instagram, Mail, Globe } from "lucide-react";
 import AbhijitPic from "../assets/abhijit_pic.jpg";
 
 const AboutUs = () => {
   return (
-    <div className="h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-6 transition-colors duration-500 flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-16 px-6 transition-colors duration-500">
       {/* About Section */}
-      <div className="max-w-4xl text-center mb-10">
+      <div className="max-w-4xl mx-auto text-center mb-16">
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-6">
           About <span className="text-purple-600">ExpenseTrack</span>
         </h1>
@@ -111,8 +111,8 @@ const AboutUs = () => {
       </div>
 
       {/* Developer Section */}
-      <div className="max-w-3xl w-full">
-        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-12">
           Meet the <span className="text-purple-600">Developer</span>
         </h2>
 
@@ -134,7 +134,7 @@ const AboutUs = () => {
             href="mailto:abhijit.rabidas.mca@gmail.com"
             className="mt-2 text-sm text-purple-600 flex items-center gap-2 hover:underline"
           >
-            <FaEnvelope /> abhijit.rabidas.mca@gmail.com
+            <Mail size={16} /> abhijit.rabidas.mca@gmail.com
           </a>
 
           {/* Social Links */}
@@ -145,7 +145,7 @@ const AboutUs = () => {
               rel="noopener noreferrer"
               className="hover:text-blue-600"
             >
-              <FaLinkedin />
+              <Linkedin size={28} />
             </a>
             <a
               href="https://www.abhijitrabidas.live/"
@@ -153,7 +153,7 @@ const AboutUs = () => {
               rel="noopener noreferrer"
               className="hover:text-green-500"
             >
-              <FaGlobe />
+              <Globe size={28} />
             </a>
             <a
               href="https://www.instagram.com/aj_das_01/"
@@ -161,7 +161,7 @@ const AboutUs = () => {
               rel="noopener noreferrer"
               className="hover:text-pink-500"
             >
-              <FaInstagram />
+              <Instagram size={28} />
             </a>
           </div>
         </div>

@@ -156,7 +156,7 @@ const OTPInput = ({
               onKeyDown={(e) => handleOnKeyDown(e, index)}
               className="h-12 w-12 text-center text-lg rounded-md border border-gray-300 dark:border-gray-600 
                        bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                       focus:outline-none focus:ring-2 focus:ring-orange-400"
+                       focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
           ))}
         </div>
@@ -180,7 +180,7 @@ const OTPInput = ({
         {showResendOTPText ? (
           <span
             onClick={handleResendOTP}
-            className="font-bold text-orange-500 hover:text-orange-600 cursor-pointer"
+            className="font-bold text-purple-500 hover:text-purple-600 cursor-pointer"
           >
             Resend Code
           </span>
