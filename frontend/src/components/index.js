@@ -5,6 +5,7 @@ import AuthLayout from "./AuthLayout.jsx";
 import OTPInput from "./OTPInput.jsx";
 import ResetPassword from "./ResetPassword.jsx";
 import Sidebar from "./Sidebar.jsx";
+import ForgotPassword from "./ForgotPassword.jsx";
 
 export {
   Navbar,
@@ -14,4 +15,5 @@ export {
   OTPInput,
   ResetPassword,
   Sidebar,
+  ForgotPassword,
 };

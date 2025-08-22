@@ -1,17 +1,23 @@
 import { useState, useRef, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { login , logout } from "../features/auth/authSlice";
+import { login, logout } from "../features/auth/authSlice";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const OtpLength = 6;
 
-const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint , setShowResetPassword = null , setShowOtpInput = null , toast}) => {
-  const navigate =  useNavigate()
-  const dispatch =  useDispatch()
+const OTPInput = ({
+  email,
+  context,
+  verifyOtpApiEndpoint,
+  resendOtpApiEndpoint,
+  setShowResetPassword = null,
+  toast,
+}) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const refArr = useRef([]);
   const [OTP, setOTP] = useState(new Array(OtpLength).fill(""));
   const [error, setError] = useState("");
@@ -39,7 +45,7 @@ const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint 
     refArr.current[0]?.focus();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     // Countdown timer logic
     if (secondsLeft === 0) {
       setShowResendOTPText(true);
@@ -47,16 +53,15 @@ const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint 
     }
 
     const timer = setInterval(() => {
-      setSecondsLeft(prev => prev - 1);
+      setSecondsLeft((prev) => prev - 1);
     }, 1000);
 
     // Cleanup
     return () => clearInterval(timer);
-  }, [secondsLeft , setSecondsLeft]);
+  }, [secondsLeft, setSecondsLeft]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     if (OTP.includes("")) {
       setError("Please enter all digits of the OTP.");
@@ -80,36 +85,35 @@ const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint 
         }
       )
       .then((res) => {
-        if(context === "signup"){
-        toast.success("OTP verified")
-        toast.success("Account created successfully")
-        setTimeout(() => {
-          dispatch(logout())
-          dispatch(login(res.data.data.user));
-          navigate("/dashboard");
-        }, 2000);
+        if (context === "signup") {
+          toast.success("OTP verified");
+          toast.success("Account created successfully");
+          setTimeout(() => {
+            dispatch(logout());
+            dispatch(login(res.data.data.user));
+            navigate("/dashboard");
+          }, 2000);
         }
-        if(context === "forgot-password"){
-          toast.success("OTP verified successfully")
-          setShowResetPassword(true)
-          setShowOtpInput(false);
+        if (context === "forgot-password") {
+          toast.success("OTP verified successfully");
+          setShowResetPassword(true);
         }
       })
       .catch((err) => {
-        console.log(err); 
-        setError(err.response.data.message)
+        console.log(err);
+        setError(err.response.data.message);
       })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const handleResendOTP = async => {
-    setError("")
+  const handleResendOTP = (async) => {
+    setError("");
     setSecondsLeft(15);
-    setShowResendOTPText(false)
+    setShowResendOTPText(false);
 
-     axios
+    axios
       .post(
         `${ApiUrl}/users/${resendOtpApiEndpoint}`,
         {
@@ -120,17 +124,27 @@ const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint 
         }
       )
       .then(() => {
-        toast.success("OTP resend to your email")
-      })
-  }
+        toast.success("OTP resend to your email");
+      });
+  };
 
   return (
-    <div className="bg-white/5 backdrop-blur-md border border-white/20 md:w-[25%] w-[85%] p-4 lg:p-7 md:p-6 rounded-lg shadow-md text-white">
-      <h2 className="my-1 text-center text-lg font-bold">Validate Your OTP</h2>
-      <p className="text-center">Please enter the OTP sent to</p>
-      <p className="text-center text-sm">{email}</p>
-      <form onSubmit={handleSubmit}>
-        <div className="w-full my-4 flex items-center justify-center gap-2">
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
+      {/* Title */}
+      <h2 className="text-xl font-bold text-center mb-4 text-black dark:text-white">
+        Validate Your OTP
+      </h2>
+
+      <p className="text-center text-gray-600 dark:text-gray-300">
+        Please enter the OTP sent to
+      </p>
+      <p className="text-center text-sm text-gray-800 dark:text-gray-200">
+        {email}
+      </p>
+
+      {/* OTP Input Form */}
+      <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <div className="w-full flex items-center justify-center gap-3">
           {OTP.map((item, index) => (
             <input
               key={index}
@@ -139,30 +153,40 @@ const OTPInput = ({email , context, verifyOtpApiEndpoint , resendOtpApiEndpoint 
               value={OTP[index]}
               onChange={(e) => handleOnChange(e.target.value, index)}
               onKeyDown={(e) => handleOnKeyDown(e, index)}
-              className="h-10 w-10 text-center text-lg rounded  bg-transparent border border-slate-300 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              className="h-12 w-12 text-center text-lg rounded-md border border-gray-300 dark:border-gray-600 
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                       focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
           ))}
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
-          className="block w-full bg-emerald-600 hover:bg-emerald-500 cursor-pointer font-bold rounded mt-2 py-2 text-center"
+          className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition cursor-pointer"
         >
-           {loading ? "Verifying..." : "Verify"}
+          {loading ? "Verifying..." : "Verify"}
         </button>
       </form>
-      <p className="mt-4 text-center">
-        Not recieved your code ?{" "}
-        {showResendOTPText && (
-          <span onClick={handleResendOTP}
-          className="font-bold hover:text-emerald-300 cursor-pointer">
-          Resend Code
-        </span>
-        )}
 
-        {!showResendOTPText && (
-          <span>00:{secondsLeft > 9 ? secondsLeft : `0${secondsLeft}` }</span>
+      {/* Resend OTP Section */}
+      <p className="mt-4 text-center text-gray-700 dark:text-gray-300">
+        Not received your code?{" "}
+        {showResendOTPText ? (
+          <span
+            onClick={handleResendOTP}
+            className="font-bold text-orange-500 hover:text-orange-600 cursor-pointer"
+          >
+            Resend Code
+          </span>
+        ) : (
+          <span className="font-semibold">
+            00:{secondsLeft > 9 ? secondsLeft : `0${secondsLeft}`}
+          </span>
         )}
       </p>
     </div>

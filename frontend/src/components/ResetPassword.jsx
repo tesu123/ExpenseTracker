@@ -3,15 +3,14 @@ import eyeOpen from "../assets/eye-line.svg";
 import eyeClosed from "../assets/eye-off-line.svg";
 import { useNavigate } from "react-router";
 
-
 import axios from "axios";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
-const ResetPassword = ({email , toast}) => {
-  const navigate = useNavigate()
+const ResetPassword = ({ email, toast, setResetPasswordSuccess }) => {
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordErrors, setPasswordErrors] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [showEyeIcon, setShowEyeIcon] = useState(false);
@@ -37,14 +36,14 @@ const ResetPassword = ({email , toast}) => {
     return errors;
   };
 
-  const checkConfirmPassword = (password , confirmPassword) => {
+  const checkConfirmPassword = (password, confirmPassword) => {
     const errors = [];
-    if(password !== confirmPassword){
-      errors.push("Password and confirm password must be same")
+    if (password !== confirmPassword) {
+      errors.push("Password and confirm password must be same");
     }
     return errors;
-  }
- 
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -54,7 +53,7 @@ const ResetPassword = ({email , toast}) => {
       return;
     }
 
-    errors = checkConfirmPassword(password, confirmPassword)
+    errors = checkConfirmPassword(password, confirmPassword);
     if (errors.length > 0) {
       setPasswordErrors(errors);
       return;
@@ -63,7 +62,6 @@ const ResetPassword = ({email , toast}) => {
     setPasswordErrors([]);
     setLoading(true);
     setError("");
-
 
     axios
       .post(
@@ -77,13 +75,11 @@ const ResetPassword = ({email , toast}) => {
         }
       )
       .then((res) => {
-        toast.success("Password reset successfully")
-        setTimeout(() => {
-           navigate("/login")
-        },2000);
+        toast.success("Password reset successfully");
+        setResetPasswordSuccess(true);
       })
       .catch((err) => {
-        setError(err.message)
+        setError(err.message);
       })
       .finally(() => {
         setLoading(false);
@@ -91,10 +87,21 @@ const ResetPassword = ({email , toast}) => {
   };
 
   return (
-      <div className="bg-white/5 backdrop-blur-md border border-white/20 md:w-[25%] w-[85%] p-4 lg:p-7 md:p-6 rounded-lg shadow-md text-white">
-        <p className="text-center text-lg my-2">Reset Your Password</p>
-        <form className="flex flex-col gap-1" onSubmit={handleSubmit}>
-          <label htmlFor="password">Password</label>
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
+      {/* Title */}
+      <h2 className="text-xl font-bold text-center mb-4 text-black dark:text-white">
+        Reset Your Password
+      </h2>
+
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        {/* Password Field */}
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            Password
+          </label>
           <div className="relative w-full">
             <input
               type={showPassword ? "text" : "password"}
@@ -108,47 +115,58 @@ const ResetPassword = ({email , toast}) => {
                 setPassword(e.target.value);
               }}
               placeholder="Enter new password"
-              className="pl-3 pr-9 py-2 rounded w-full bg-transparent border border-slate-300 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+              className="w-full px-4 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
             <img
               id="eye"
               src={showPassword ? eyeOpen : eyeClosed}
-              className={`absolute w-5 h-5 top-3 right-2 cursor-pointer ${
+              className={`absolute w-5 h-5 top-3 right-3 cursor-pointer ${
                 showEyeIcon ? "block" : "hidden"
               }`}
               onClick={togglePassword}
             />
           </div>
-           <label htmlFor="confirm-password">Confirm Password</label>
-              <input
-              type="password"
-              required
-              id="confirm-password"
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
-              placeholder="Re-enter new password"
-              className="pl-3 pr-9 py-2 rounded w-full bg-transparent border border-slate-300 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-            />
-          {passwordErrors.length > 0 && (
-            <ul className="text-red-500 text-sm">
-              {passwordErrors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          )}
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button
-            type="submit"
-            className="bg-emerald-600 hover:bg-emerald-500 cursor-pointer font-bold rounded mt-4 mb-4 py-2 text-center"
-            disabled={loading}
-          >
-            Change Password
-          </button>
-        </form>
-      </div>
+        </div>
 
+        {/* Confirm Password */}
+        <div>
+          <label
+            htmlFor="confirm-password"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            required
+            id="confirm-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Re-enter new password"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+          />
+        </div>
+
+        {/* Errors */}
+        {passwordErrors.length > 0 && (
+          <ul className="text-red-500 text-sm">
+            {passwordErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        )}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition cursor-pointer"
+          disabled={loading}
+        >
+          Change Password
+        </button>
+      </form>
+    </div>
   );
 };
 

@@ -3,8 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { OTPInput } from "../components";
-
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
+import { Eye, EyeOff } from "lucide-react";
 
 function SignupPage() {
   const [name, setName] = useState("");
@@ -12,7 +12,6 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [passwordErrors, setPasswordErrors] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
-  const [showEyeIcon, setShowEyeIcon] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -79,6 +78,10 @@ function SignupPage() {
       });
   };
 
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <Toaster position="top-right" />
@@ -129,15 +132,29 @@ function SignupPage() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Password
               </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              />
+              <div className="relative">
+                {showPassword ? (
+                  <EyeOff
+                    className="w-5 absolute top-3 right-3 text-black dark:text-white cursor-pointer"
+                    onClick={toggleShowPassword}
+                  />
+                ) : (
+                  <Eye
+                    className="w-5 absolute top-3 right-3 text-black dark:text-white cursor-pointer"
+                    onClick={toggleShowPassword}
+                  />
+                )}
+
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="w-full pl-4 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
+              </div>
             </div>
 
             {passwordErrors.length > 0 && (
