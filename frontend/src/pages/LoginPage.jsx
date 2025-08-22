@@ -43,6 +43,7 @@ function LoginPage() {
         setEmail("");
         setPassword("");
         navigate("/dashboard");
+        toast.success("Successfully logged in");
       })
       .catch(() => {
         setError("Error while logging in");
@@ -175,7 +176,7 @@ function LoginPage() {
           toast={toast}
         />
       )}
-      {(showResetPassword && !resetPasswordSuccess) && (
+      {showResetPassword && !resetPasswordSuccess && (
         <ResetPassword
           email={resetPasswordEmail}
           toast={toast}

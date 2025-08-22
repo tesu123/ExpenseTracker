@@ -34,7 +34,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     axios
       .post(`${ApiUrl}/users/logout`, {}, { withCredentials: true })
       .then(() => {
-        toast.success("logout successfull");
         dispatch(logout());
         navigate("/");
       })
