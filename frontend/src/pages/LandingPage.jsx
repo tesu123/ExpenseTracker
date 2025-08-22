@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import expense from "../assets/expense.png";
 function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -47,7 +47,7 @@ function LandingPage() {
           {/* Right Image */}
           <div className="flex-1 flex justify-center md:justify-end">
             <img
-              src="./src/assets/expense.png"
+              src={expense}
               alt="Expense Tracker App"
               className="w-64 sm:w-72 md:w-80 lg:w-[22rem] drop-shadow-xl"
             />
