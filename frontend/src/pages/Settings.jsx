@@ -22,7 +22,6 @@ const Settings = () => {
 
   const user = useSelector((state) => state.auth.user);
 
-  // -------- Update Profile --------
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -79,7 +78,6 @@ const Settings = () => {
 
       toast.success(res.data.message || "Password updated successfully");
 
-      // Reset fields
       setPasswords({ current: "", newPass: "" });
       setIsEditingPassword(false);
     } catch (err) {
@@ -242,7 +240,7 @@ const Settings = () => {
                 <input
                   type={showPassword ? "text" : "password"}
                   name="current"
-                  value={passwords.current} // ✅ bind state
+                  value={passwords.current}
                   onChange={handlePasswordChange}
                   placeholder="Current Password"
                   disabled={!isEditingPassword}
@@ -279,7 +277,7 @@ const Settings = () => {
                 <input
                   type={showNewPassword ? "text" : "password"}
                   name="newPass"
-                  value={passwords.newPass} // ✅ bind state
+                  value={passwords.newPass}
                   onChange={handlePasswordChange}
                   placeholder="New Password"
                   disabled={!isEditingPassword}
