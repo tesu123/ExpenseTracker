@@ -1,7 +1,7 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 
-export const generateAccessToken=(email)=>{
-    return jwt.sign(
+export const generateAccessToken = (email) => {
+  return jwt.sign(
     {
       email: email,
     },
@@ -10,4 +10,4 @@ export const generateAccessToken=(email)=>{
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
-}
+};

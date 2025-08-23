@@ -1,55 +1,130 @@
-// function Settings() {
-//   return (
-//     <div>
-//       <h1 className="text-2xl font-bold">Settings</h1>
-//     </div>
-//   );
-// }
-
-// export default Settings;
-
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Pencil, X } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
+
+const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Settings = () => {
-  const [profile, setProfile] = useState("");
-
+  const [name, setName] = useState("");
   const [passwords, setPasswords] = useState({
     current: "",
     newPass: "",
-    confirm: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setNewShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
-  const handleProfileChange = (e) => {
-    const { id, value } = e.target;
-    setProfile((prev) => ({ ...prev, [id]: value }));
+  const user = useSelector((state) => state.auth.user);
+
+  // -------- Update Profile --------
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      await axios.post(
+        `${ApiUrl}/users/update-details`,
+        {
+          name: name || user?.name, // fallback to old name
+          email: user?.email,
+        },
+        { withCredentials: true }
+      );
+
+      toast.success("Profile updated successfully");
+      setIsEditingProfile(false);
+    } catch (err) {
+      console.log(err);
+      if (err.response?.status === 500) {
+        setError(err.response.statusText);
+      } else if (err.response?.status === 400) {
+        setError("User with this email already exists");
+      } else {
+        setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePasswordChange = (e) => {
-    const { id, value } = e.target;
-    setPasswords((prev) => ({ ...prev, [id]: value }));
+    setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
 
-  const handleProfileSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profile Saved:", profile);
-    // TODO: connect with backend
+
+    if (!passwords.current || !passwords.newPass) {
+      toast.error("Both fields are required");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${ApiUrl}/users/update-password`,
+        {
+          password: passwords.current,
+          newpassword: passwords.newPass,
+          email: user?.email,
+        },
+        { withCredentials: true }
+      );
+
+      toast.success(res.data.message || "Password updated successfully");
+
+      // Reset fields
+      setPasswords({ current: "", newPass: "" });
+    } catch (err) {
+      console.error("Password update error:", err);
+      toast.error(err.response?.data?.message || "Failed to update password");
+    }
   };
 
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    console.log("Password Change:", passwords);
-    // TODO: connect with backend
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const toggleShowNewPassword = () => {
+    setNewShowPassword((prev) => !prev);
   };
 
   return (
     <div className="p-6">
+      <Toaster position="top-right" />
       <h2 className="text-3xl font-bold mb-6">Settings</h2>
+
       <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg max-w-2xl mx-auto space-y-8">
         {/* Profile Settings */}
-        <div>
+        <div className="relative">
           <h3 className="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-300 border-b border-gray-300 dark:border-gray-700 pb-2">
             Profile
           </h3>
+
+          {isEditingProfile ? (
+            <button
+              type="button"
+              onClick={() => setIsEditingProfile(false)}
+              className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+            >
+              <X size={20} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditingProfile(true)}
+              className="absolute top-0 right-0 text-purple-500 hover:text-purple-700"
+            >
+              <Pencil size={20} />
+            </button>
+          )}
+
           <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div>
               <label
@@ -61,12 +136,19 @@ const Settings = () => {
               <input
                 type="text"
                 id="name"
-                placeholder="Enter your name"
-                onChange={handleProfileChange}
-                className="w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder={user?.name || "Enter your name"}
+                onChange={(e) => setName(e.target.value)}
+                disabled={!isEditingProfile}
+                className={`w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border 
+                  ${
+                    isEditingProfile
+                      ? "focus:ring-2 focus:ring-purple-500"
+                      : "opacity-70 cursor-not-allowed"
+                  }`}
               />
             </div>
-            <div>
+
+            <div className="relative group">
               <label
                 htmlFor="email"
                 className="block text-gray-700 dark:text-gray-400 mb-2"
@@ -76,27 +158,62 @@ const Settings = () => {
               <input
                 type="email"
                 id="email"
-                placeholder="abc@gmail.com"
-                onChange={handleProfileChange}
-                className="w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={user?.email}
+                disabled
+                className="w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border border-gray-300 dark:border-gray-600 opacity-70 cursor-not-allowed"
               />
+              {/* Red circle only on hover */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden group-hover:flex">
+                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              </div>
             </div>
-            <div className="pt-2">
-              <button
-                type="submit"
-                className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg"
-              >
-                Save Profile
-              </button>
-            </div>
+
+            {isEditingProfile && (
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg"
+                  disabled={loading}
+                >
+                  {loading ? "Saving..." : "Save Profile"}
+                </button>
+              </div>
+            )}
           </form>
         </div>
 
         {/* Security Settings */}
-        <div>
+        <div className="relative">
           <h3 className="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-300 border-b border-gray-300 dark:border-gray-700 pb-2">
             Security
           </h3>
+
+          {isEditingPassword ? (
+            <button
+              type="button"
+              onClick={() => {
+                setIsEditingPassword(false);
+                setPasswords({
+                  current: "",
+                  newPass: "",
+                });
+                setShowPassword(false);
+                setNewShowPassword(false);
+              }}
+              className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+            >
+              <X size={20} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditingPassword(true)}
+              className="absolute top-0 right-0 text-purple-500 hover:text-purple-700"
+            >
+              <Pencil size={20} />
+            </button>
+          )}
+
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             <div>
               <label
@@ -105,14 +222,36 @@ const Settings = () => {
               >
                 Current Password
               </label>
-              <input
-                type="password"
-                id="current"
-                value={passwords.current}
-                onChange={handlePasswordChange}
-                className="w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+              <div className="relative">
+                {showPassword ? (
+                  <EyeOff
+                    className="w-5 absolute top-3 right-3 text-black dark:text-white cursor-pointer"
+                    onClick={toggleShowPassword}
+                  />
+                ) : (
+                  <Eye
+                    className="w-5 absolute top-3 right-3 text-black dark:text-white cursor-pointer"
+                    onClick={toggleShowPassword}
+                  />
+                )}
+
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="current"
+                  value={passwords.current} // ✅ bind state
+                  onChange={handlePasswordChange}
+                  placeholder="Current Password"
+                  disabled={!isEditingPassword}
+                  className={`w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border 
+                  ${
+                    isEditingPassword
+                      ? "focus:ring-2 focus:ring-purple-500"
+                      : "opacity-70 cursor-not-allowed"
+                  }`}
+                />
+              </div>
             </div>
+
             <div>
               <label
                 htmlFor="newPass"
@@ -120,37 +259,47 @@ const Settings = () => {
               >
                 New Password
               </label>
-              <input
-                type="password"
-                id="newPass"
-                value={passwords.newPass}
-                onChange={handlePasswordChange}
-                className="w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+              <div className="relative">
+                {showNewPassword ? (
+                  <EyeOff
+                    className="w-5 absolute top-3 right-3 text-black dark:text-white cursor-pointer"
+                    onClick={toggleShowNewPassword}
+                  />
+                ) : (
+                  <Eye
+                    className="w-5 absolute top-3 right-3 text-black dark:text-white cursor-pointer"
+                    onClick={toggleShowNewPassword}
+                  />
+                )}
+
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  name="newPass"
+                  value={passwords.newPass} // ✅ bind state
+                  onChange={handlePasswordChange}
+                  placeholder="New Password"
+                  disabled={!isEditingPassword}
+                  className={`w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border 
+                  ${
+                    isEditingPassword
+                      ? "focus:ring-2 focus:ring-purple-500"
+                      : "opacity-70 cursor-not-allowed"
+                  }`}
+                />
+              </div>
             </div>
-            <div>
-              <label
-                htmlFor="confirm"
-                className="block text-gray-700 dark:text-gray-400 mb-2"
-              >
-                Confirm New Password
-              </label>
-              <input
-                type="password"
-                id="confirm"
-                value={passwords.confirm}
-                onChange={handlePasswordChange}
-                className="w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-            <div className="pt-2">
-              <button
-                type="submit"
-                className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg"
-              >
-                Change Password
-              </button>
-            </div>
+
+            {isEditingPassword && (
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg"
+                  disabled={loading}
+                >
+                  {loading ? "Changing..." : "Change password"}
+                </button>
+              </div>
+            )}
           </form>
         </div>
       </div>

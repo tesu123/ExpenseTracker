@@ -400,3 +400,107 @@ export const logoutUser = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const updateUserDetails = async (req, res) => {
+  const { name, email } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    if (!name) {
+      throw new ApiError(400, "Name is required");
+    }
+
+    const updateData = {};
+    if (name) updateData.name = name;
+
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          updatedUser,
+          "Account details updated successfully"
+        )
+      );
+  } catch (error) {
+    console.error("Update user error:", error);
+    throw new ApiError(500, error.message || "Failed to update user details");
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  const { password, newpassword, email } = req.body;
+
+  try {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User does not exist" });
+    }
+
+    if (!newpassword || !password) {
+      return res
+        .status(400)
+        .json({ message: "Current and new password are required" });
+    }
+
+    // ✅ Compare current password with hashed password in DB
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect" });
+    }
+
+    // ✅ Prevent setting the same password again
+    const isSamePassword = await bcrypt.compare(newpassword, user.password);
+    if (isSamePassword) {
+      return res
+        .status(400)
+        .json({ message: "New password cannot be the same as old password" });
+    }
+
+    // ✅ Hash new password
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+
+    // ✅ Update user password
+    const updatedUser = await prisma.user.update({
+      where: { email },
+      data: {
+        password: hashedPassword,
+        otp: null,
+        otpExpiry: null,
+      },
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, updatedUser, "Password updated successfully"));
+  } catch (error) {
+    console.error("Update password error:", error);
+    return res
+      .status(500)
+      .json({ message: error.message || "Failed to update user password" });
+  }
+};
