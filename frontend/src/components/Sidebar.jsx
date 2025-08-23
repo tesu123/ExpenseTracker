@@ -28,6 +28,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: "Transactions", path: "/transactions", icon: <FaReceipt /> },
     { name: "Analytics", path: "/analytics", icon: <FaChartBar /> },
     { name: "Settings", path: "/settings", icon: <FaCog /> },
+    { name: "About Us", path: "/about-us", icon: <FaInfoCircle /> },
   ];
 
   const logoutUser = async () => {
@@ -134,7 +135,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               />
             </div>
           </div>
-          <Link
+          {/* <Link
             to={bottomItem.path}
             onClick={toggleSidebar} // close on mobile
             className={`flex items-center gap-3 px-6 py-3 font-semibold text-gray-700 dark:text-white
@@ -145,7 +146,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               }`}
           >
             {bottomItem.icon} {bottomItem.name}
-          </Link>
+          </Link> */}
         </div>
       </div>
     </>

@@ -8,7 +8,7 @@ import { Eye, EyeOff } from "lucide-react";
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Settings = () => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState({ name: " " });
   const [passwords, setPasswords] = useState({
     current: "",
     newPass: "",
@@ -81,6 +81,7 @@ const Settings = () => {
 
       // Reset fields
       setPasswords({ current: "", newPass: "" });
+      setIsEditingPassword(false);
     } catch (err) {
       console.error("Password update error:", err);
       toast.error(err.response?.data?.message || "Failed to update password");
@@ -96,7 +97,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-1">
       <Toaster position="top-right" />
       <h2 className="text-3xl font-bold mb-6">Settings</h2>
 
@@ -110,7 +111,10 @@ const Settings = () => {
           {isEditingProfile ? (
             <button
               type="button"
-              onClick={() => setIsEditingProfile(false)}
+              onClick={() => {
+                setIsEditingProfile(false);
+                setName({ name: "" });
+              }}
               className="absolute top-0 right-0 text-red-500 hover:text-red-700"
             >
               <X size={20} />
@@ -135,9 +139,9 @@ const Settings = () => {
               </label>
               <input
                 type="text"
-                id="name"
-                placeholder={user?.name || "Enter your name"}
+                name="name"
                 onChange={(e) => setName(e.target.value)}
+                placeholder={user?.name || "Enter your name"}
                 disabled={!isEditingProfile}
                 className={`w-full bg-gray-200 dark:bg-gray-700 p-2 rounded-lg border 
                   ${
