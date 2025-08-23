@@ -61,7 +61,7 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <Toaster position="top-right" />
       {(!showForgotPassword || resetPasswordSuccess) && (
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
           {/* Title */}
           <h1 className="text-2xl font-bold text-center mb-6">
             <span className="text-purple-600">Expense</span>

@@ -31,10 +31,10 @@ function ForgotPassword({ setSuccess, setResetPasswordEmail }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
       {/* Title */}
       <h2 className="text-xl font-bold text-center mb-4 text-black dark:text-white">
-        Enter Your Email
+        Enter Your <span className="text-purple-600">Email</span>
       </h2>
 
       {/* Email Input Form */}

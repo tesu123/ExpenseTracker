@@ -130,10 +130,10 @@ const OTPInput = ({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-full max-w-md">
+    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
       {/* Title */}
       <h2 className="text-xl font-bold text-center mb-4 text-black dark:text-white">
-        Validate Your OTP
+        Validate Your <span className="text-purple-600">OTP</span>
       </h2>
 
       <p className="text-center text-gray-600 dark:text-gray-300">
@@ -145,7 +145,7 @@ const OTPInput = ({
 
       {/* OTP Input Form */}
       <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-        <div className="w-full flex items-center justify-center gap-3">
+        <div className="w-full flex items-center justify-center gap-2">
           {OTP.map((item, index) => (
             <input
               key={index}
@@ -154,7 +154,7 @@ const OTPInput = ({
               value={OTP[index]}
               onChange={(e) => handleOnChange(e.target.value, index)}
               onKeyDown={(e) => handleOnKeyDown(e, index)}
-              className="h-12 w-12 text-center text-lg rounded-md border border-gray-300 dark:border-gray-600 
+              className="h-10 w-10 text-center text-lg rounded-md border border-gray-300 dark:border-gray-600 
                        bg-white dark:bg-gray-700 text-gray-900 dark:text-white
                        focus:outline-none focus:ring-2 focus:ring-purple-400"
             />
