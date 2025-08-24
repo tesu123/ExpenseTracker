@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { verifyJWT } from "./middlewares/auth.middleware.js";
 
 const app = express();
 
@@ -34,8 +35,12 @@ app.get("/", (req, res) => {
 
 //import routes
 import userRouter from "./routes/user.routes.js";
+import incomeRouter from "./routes/income.routes.js";
+import expenseRouter from "./routes/expense.routes.js";
 
 //route declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/income", incomeRouter);
+app.use("/api/v1/expense", expenseRouter);
 
 export { app };

@@ -23,6 +23,10 @@ model User {
   otpExpiry DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  // Relations
+  expenses Expense[]
+  incomes  Income[]
 }
 
 model TempUser {
@@ -32,4 +36,30 @@ model TempUser {
   password  String
   otp       String
   otpExpiry DateTime
+}
+
+model Income {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Float
+  category    String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Float
+  category    String
+  description String // optional: e.g., "Netflix subscription"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
