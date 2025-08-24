@@ -1,5 +1,7 @@
 import { Router } from "express";
-import { getBalance } from "../controllers/balance.controller.js";
+import {
+  getBalance,
+} from "../controllers/balance.controller.js";
 
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 

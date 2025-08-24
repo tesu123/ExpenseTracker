@@ -33,8 +33,46 @@ export const addExpense = async (req, res, next) => {
   }
 };
 
+// 📅 Get Total Expense for Current Month
+export const getMonthlyExpense = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized - User not found");
+    }
+
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1); // first day of month
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1); // first day of next month
+
+    const monthlyExpense = await prisma.expense.aggregate({
+      _sum: { amount: true },
+      where: {
+        userId,
+        createdAt: {
+          gte: startOfMonth,
+          lt: endOfMonth,
+        },
+      },
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { totalMonthlyExpense: monthlyExpense._sum.amount || 0 },
+          "Monthly expense calculated successfully"
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
 // 📄 Get All Expenses of User
-export const getExpenses = async (req, res, next) => {
+export const getAllExpenses = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 

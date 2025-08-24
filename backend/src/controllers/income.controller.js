@@ -33,8 +33,46 @@ export const addIncome = async (req, res, next) => {
   }
 };
 
+// 📅 Get Total Income for Current Month
+export const getMonthlyIncome = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized - User not found");
+    }
+
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1); // first day of month
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1); // first day of next month
+
+    const monthlyIncome = await prisma.income.aggregate({
+      _sum: { amount: true },
+      where: {
+        userId,
+        createdAt: {
+          gte: startOfMonth,
+          lt: endOfMonth,
+        },
+      },
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { totalMonthlyIncome: monthlyIncome._sum.amount || 0 },
+          "Monthly income calculated successfully"
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
 // 📄 Get All Incomes of User
-export const getIncomes = async (req, res, next) => {
+export const getAllIncomes = async (req, res, next) => {
   try {
     const userId = req.user?.id;
 

@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
   addIncome,
-  getIncomes,
+  getMonthlyIncome,
+  getAllIncomes,
   deleteIncome,
 } from "../controllers/income.controller.js";
 
@@ -10,7 +11,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.route("/add-income").post(verifyJWT, addIncome);
-router.route("/get-income").get(verifyJWT, getIncomes);
+router.route("/get-monthly-income").get(verifyJWT, getMonthlyIncome);
 router.route("/delete-income/:id").delete(verifyJWT, deleteIncome);
+router.route("/get-all-incomes").get(verifyJWT, getAllIncomes);
 
 export default router;

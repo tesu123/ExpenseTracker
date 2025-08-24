@@ -1,46 +1,71 @@
-// function Transactions() {
-//   return (
-//     <div>
-//       <h1 className="text-2xl font-bold">Expenses</h1>
-//     </div>
-//   );
-// }
+import { useEffect, useState } from "react";
+import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
-// export default Transactions;
-
-import { useState } from "react";
+const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
 function Transactions() {
-  const [transactions] = useState([
-    {
-      date: "2024-07-28",
-      description: "Netflix Subscription",
-      category: "Entertainment",
-      amount: -15.99,
-      type: "Expense",
-    },
-    {
-      date: "2024-07-27",
-      description: "Groceries",
-      category: "Food",
-      amount: -85.4,
-      type: "Expense",
-    },
-    {
-      date: "2024-07-25",
-      description: "Paycheck",
-      category: "Salary",
-      amount: 2250,
-      type: "Income",
-    },
-    {
-      date: "2024-07-22",
-      description: "Gasoline",
-      category: "Transport",
-      amount: -45.0,
-      type: "Expense",
-    },
-  ]);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ Fetch incomes & expenses
+  const fetchTransactions = async () => {
+    try {
+      setLoading(true);
+
+      const [incomeRes, expenseRes] = await Promise.all([
+        axios.get(`${ApiUrl}/income/get-all-incomes`, {
+          withCredentials: true,
+        }),
+        axios.get(`${ApiUrl}/expense/get-all-expenses`, {
+          withCredentials: true,
+        }),
+      ]);
+
+      const incomes = incomeRes.data.data.map((t) => ({
+        ...t,
+        type: "Income",
+      }));
+
+      const expenses = expenseRes.data.data.map((t) => ({
+        ...t,
+        type: "Expense",
+      }));
+
+      const merged = [...incomes, ...expenses].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setTransactions(merged);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch transactions");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Delete transaction
+  const handleDelete = async (id, type) => {
+    try {
+      await axios.delete(
+        `${ApiUrl}/${
+          type === "Income" ? "income" : "expense"
+        }/delete-${type.toLowerCase()}/${id}`,
+        { withCredentials: true }
+      );
+
+      toast.success(`${type} deleted successfully`);
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete transaction");
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
   const getCategoryColor = (category) => {
     switch (category) {
@@ -59,6 +84,7 @@ function Transactions() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-6">
+      <Toaster position="top-right" />
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Transactions
@@ -92,64 +118,71 @@ function Transactions() {
 
           {/* Transactions Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-sm md:text-base">
-              <thead>
-                <tr className="text-left text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                  <th className="p-3">Date</th>
-                  <th className="p-3">Description</th>
-                  <th className="p-3">Category</th>
-                  <th className="p-3">Amount</th>
-                  <th className="p-3">Type</th>
-                  <th className="p-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((t, i) => (
-                  <tr
-                    key={i}
-                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
-                  >
-                    <td className="p-3 text-gray-900 dark:text-gray-100">
-                      {t.date}
-                    </td>
-                    <td className="p-3 text-gray-900 dark:text-gray-100">
-                      {t.description}
-                    </td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(
-                          t.category
-                        )}`}
-                      >
-                        {t.category}
-                      </span>
-                    </td>
-                    <td
-                      className={`p-3 font-semibold ${
-                        t.amount < 0
-                          ? "text-red-600 dark:text-red-400"
-                          : "text-green-600 dark:text-green-400"
-                      }`}
-                    >
-                      {t.amount < 0
-                        ? `-$${Math.abs(t.amount).toFixed(2)}`
-                        : `+$${t.amount.toFixed(2)}`}
-                    </td>
-                    <td className="p-3 text-gray-700 dark:text-gray-300">
-                      {t.type}
-                    </td>
-                    <td className="p-3 space-x-2">
-                      <button className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium">
-                        Edit
-                      </button>
-                      <button className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium">
-                        Delete
-                      </button>
-                    </td>
+            {loading ? (
+              <p className="text-center text-gray-500">Loading...</p>
+            ) : (
+              <table className="w-full text-sm md:text-base">
+                <thead>
+                  <tr className="text-left text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                    <th className="p-3">Date</th>
+                    <th className="p-3">Description</th>
+                    <th className="p-3">Category</th>
+                    <th className="p-3">Amount</th>
+                    <th className="p-3">Type</th>
+                    <th className="p-3">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {transactions.map((t) => (
+                    <tr
+                      key={t.id}
+                      className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
+                    >
+                      <td className="p-3 text-gray-900 dark:text-gray-100">
+                        {new Date(t.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="p-3 text-gray-900 dark:text-gray-100">
+                        {t.description}
+                      </td>
+                      <td className="p-3">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(
+                            t.category
+                          )}`}
+                        >
+                          {t.category}
+                        </span>
+                      </td>
+                      <td
+                        className={`p-3 font-semibold ${
+                          t.type === "Expense"
+                            ? "text-red-600 dark:text-red-400"
+                            : "text-green-600 dark:text-green-400"
+                        }`}
+                      >
+                        {t.type === "Expense"
+                          ? `-₹${t.amount.toFixed(2)}`
+                          : `+₹${t.amount.toFixed(2)}`}
+                      </td>
+                      <td className="p-3 text-gray-700 dark:text-gray-300">
+                        {t.type}
+                      </td>
+                      <td className="p-3 space-x-2">
+                        <button className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium">
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(t.id, t.type)}
+                          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
