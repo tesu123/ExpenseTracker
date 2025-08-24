@@ -1,21 +1,21 @@
 import AboutUs from "./AboutUs";
 import Analytics from "./Analytics";
 import Dashboard from "./Dashboard";
-import Expenses from "./Expenses";
+import Transactions from "./Transactions";
 import LandingPage from "./LandingPage";
 import LoginPage from "./LoginPage";
 import SignupPage from "./SignupPage";
 import Settings from "./Settings";
-import ForgotPassword from "./ForgotPassword";
+import LandingLayout from "./LandingLayout";
 
 export {
   AboutUs,
   Analytics,
   Dashboard,
-  Expenses,
+  Transactions,
   LandingPage,
   LoginPage,
   SignupPage,
   Settings,
-  ForgotPassword,
+  LandingLayout,
 };

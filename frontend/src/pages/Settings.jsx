@@ -174,7 +174,7 @@ const Settings = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg"
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Save Profile"}
@@ -295,7 +295,7 @@ const Settings = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-lg"
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg"
                   disabled={loading}
                 >
                   {loading ? "Changing..." : "Change password"}
