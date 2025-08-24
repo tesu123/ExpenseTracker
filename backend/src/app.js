@@ -37,10 +37,12 @@ app.get("/", (req, res) => {
 import userRouter from "./routes/user.routes.js";
 import incomeRouter from "./routes/income.routes.js";
 import expenseRouter from "./routes/expense.routes.js";
+import balanceRouter from "./routes/balance.routes.js";
 
 //route declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/income", incomeRouter);
 app.use("/api/v1/expense", expenseRouter);
+app.use("/api/v1/balance", balanceRouter);
 
 export { app };
