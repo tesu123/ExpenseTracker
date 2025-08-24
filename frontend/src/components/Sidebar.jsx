@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Avatar from "react-avatar";
 import {
   FaUser,
@@ -7,22 +7,24 @@ import {
   FaCog,
   FaInfoCircle,
   FaTimes, // ❌ Close Icon
-  FaSignOutAlt,
 } from "react-icons/fa";
 
 import { LogOut } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { logout } from "../features/auth/authSlice.js";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
+
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", icon: <FaUser /> },
     { name: "Transactions", path: "/transactions", icon: <FaReceipt /> },
@@ -31,32 +33,34 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: "About Us", path: "/about-us", icon: <FaInfoCircle /> },
   ];
 
-  const logoutUser = async () => {
-    axios
-      .post(`${ApiUrl}/users/logout`, {}, { withCredentials: true })
-      .then(() => {
-        dispatch(logout());
-        navigate("/");
-      })
-      .catch(() => {
-        toast.error("error in logout");
-      });
-  };
-  const bottomItem = {
-    name: "About Us",
-    path: "/about-us",
-    icon: <FaInfoCircle />,
-  };
-
   const user = useSelector((state) => state.auth.user);
   const isLoggedIn = useSelector((state) => state.auth.status);
 
-  if (!isLoggedIn) {
-    navigate("/");
-  }
+  // ✅ FIX: handle redirects inside useEffect
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
+  const logoutUser = async () => {
+    setIsLoggingOut(true);
+    try {
+      await axios.post(`${ApiUrl}/users/logout`, {}, { withCredentials: true });
+
+      dispatch(logout());
+      navigate("/");
+    } catch (err) {
+      toast.error("Error logging out");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
+
   return (
     <>
       <Toaster position="top-right" />
@@ -126,27 +130,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                   <span className="text-xs">{user?.email}</span>
                 </div>
               </div>
-              <LogOut
-                className=" cursor-pointer"
-                size={20}
-                onClick={() => {
-                  logoutUser();
-                }}
-              />
+              <button
+                onClick={logoutUser}
+                disabled={isLoggingOut}
+                className="cursor-pointer"
+              >
+                <LogOut size={20} />
+              </button>
             </div>
           </div>
-          {/* <Link
-            to={bottomItem.path}
-            onClick={toggleSidebar} // close on mobile
-            className={`flex items-center gap-3 px-6 py-3 font-semibold text-gray-700 dark:text-white
-              ${
-                location.pathname === bottomItem.path
-                  ? "bg-gray-200 dark:bg-gray-700 border-r-4 border-purple-600"
-                  : "hover:bg-gray-200 dark:hover:bg-gray-700"
-              }`}
-          >
-            {bottomItem.icon} {bottomItem.name}
-          </Link> */}
         </div>
       </div>
     </>
