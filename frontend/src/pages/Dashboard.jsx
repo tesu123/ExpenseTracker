@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Users, Crown, Book } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
-import Logo from "../assets/microdomeLogo.png";
+import Logo from "../assets/Zuno.png";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
