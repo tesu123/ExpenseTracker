@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Users, Crown, Book } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import Logo from "../assets/microdomeLogo.png";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -14,6 +15,8 @@ function Dashboard() {
   });
 
   const [transactions, setTransactions] = useState([]);
+  const [loadingScreen, setLoadingScreen] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Add income
   const [showIncomeForm, setShowIncomeForm] = useState(false);
@@ -118,6 +121,8 @@ function Dashboard() {
         setTransactions(merged.slice(0, 10));
       } catch (error) {
         console.error("Error fetching transactions:", error);
+      } finally {
+        setLoadingScreen(false);
       }
     };
 
@@ -136,6 +141,7 @@ function Dashboard() {
   // Submit new income
   const handleIncomeSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(`${ApiUrl}/income/add-income`, incomeForm, {
         withCredentials: true,
@@ -156,12 +162,15 @@ function Dashboard() {
     } catch (error) {
       console.error(error);
       toast.error("Error adding income");
+    } finally {
+      setLoading(false);
     }
   };
 
   // Submit new expense
   const handleExpenseSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(
         `${ApiUrl}/expense/add-expense`,
@@ -186,18 +195,33 @@ function Dashboard() {
     } catch (error) {
       console.error(error);
       toast.error("Error adding expense");
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Custom Logo Spinner
+  if (loadingScreen) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
+        {/* Logo */}
+        <img src={Logo} alt="Loading Logo" className="w-20 h-20" />
+
+        {/* Spinner */}
+        <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 px-6 py-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-0">
       <Toaster position="top-right" />
       <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
         Dashboard
       </h2>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-8">
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
           <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
             Total Balance
@@ -254,7 +278,7 @@ function Dashboard() {
       {/* Add Income Modal */}
       {showIncomeForm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-80 max-w-md">
             <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
               Add Income
             </h3>
@@ -291,14 +315,16 @@ function Dashboard() {
                   type="button"
                   onClick={() => setShowIncomeForm(false)}
                   className="px-4 py-2 rounded bg-red-500 hover:bg-red-700"
+                  disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-700"
+                  disabled={loading}
                 >
-                  Add
+                  {loading ? "Adding..." : "Add"}
                 </button>
               </div>
             </form>
@@ -309,7 +335,7 @@ function Dashboard() {
       {/* Add Expense Modal */}
       {showExpenseForm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-80 max-w-md">
             <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
               Add Expense
             </h3>
@@ -346,14 +372,16 @@ function Dashboard() {
                   type="button"
                   onClick={() => setShowExpenseForm(false)}
                   className="px-4 py-2 rounded bg-red-500 hover:bg-red-700"
+                  disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-700"
+                  disabled={loading}
                 >
-                  Add
+                  {loading ? "Adding..." : "Add"}
                 </button>
               </div>
             </form>

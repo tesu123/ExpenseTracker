@@ -59,6 +59,7 @@ const Settings = () => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!passwords.current || !passwords.newPass) {
       toast.error("Both fields are required");
@@ -83,6 +84,8 @@ const Settings = () => {
     } catch (err) {
       console.error("Password update error:", err);
       toast.error(err.response?.data?.message || "Failed to update password");
+    } finally {
+      setLoading(false);
     }
   };
 
