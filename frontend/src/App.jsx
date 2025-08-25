@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { login, logout } from "./features/auth/authSlice";
 import { useDispatch } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -66,42 +67,45 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      {/* Public Pages */}
-      <Route path="/" element={<LandingLayout />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        {/* Public Pages */}
+        <Route path="/" element={<LandingLayout />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
-      {/* Main App Layout */}
-      <Route
-        path="/*"
-        element={
-          <div className="flex h-screen dark:bg-gray-900">
-            {/* Sidebar */}
-            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+        {/* Main App Layout */}
+        <Route
+          path="/*"
+          element={
+            <div className="flex h-screen dark:bg-gray-900">
+              {/* Sidebar */}
+              <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col overflow-auto">
-              <Navbar
-                toggleSidebar={toggleSidebar}
-                darkMode={darkMode}
-                setDarkMode={setDarkMode}
-              />
+              {/* Main Content */}
+              <div className="flex-1 flex flex-col overflow-auto">
+                <Navbar
+                  toggleSidebar={toggleSidebar}
+                  darkMode={darkMode}
+                  setDarkMode={setDarkMode}
+                />
 
-              <div className="flex-1 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white overflow-auto">
-                <Routes>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/transactions" element={<Transactions />} />
-                  <Route path="/analytics" element={<Analytics />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/about-us" element={<AboutUs />} />
-                </Routes>
+                <div className="flex-1 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white overflow-auto">
+                  <Routes>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/transactions" element={<Transactions />} />
+                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/about-us" element={<AboutUs />} />
+                  </Routes>
+                </div>
               </div>
             </div>
-          </div>
-        }
-      />
-    </Routes>
+          }
+        />
+      </Routes>
+    </>
   );
 }
 

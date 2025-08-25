@@ -42,8 +42,8 @@ function LoginPage() {
         dispatch(login(res.data.data.user));
         setEmail("");
         setPassword("");
-        navigate("/dashboard");
         toast.success("Successfully logged in");
+        navigate("/dashboard");
       })
       .catch(() => {
         setError("Error while logging in");
@@ -59,7 +59,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       {(!showForgotPassword || resetPasswordSuccess) && (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
           {/* Title */}

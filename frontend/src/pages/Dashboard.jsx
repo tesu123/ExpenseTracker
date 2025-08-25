@@ -194,7 +194,7 @@ function Dashboard() {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Error adding expense");
+      toast.error("Expense can't be greater than total balance");
     } finally {
       setLoading(false);
     }
@@ -215,7 +215,7 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-0">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
         Dashboard
       </h2>
@@ -226,7 +226,7 @@ function Dashboard() {
           <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
             Total Balance
           </h3>
-          <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <p className="font-semibold text-gray-900 dark:text-white lg:text-2xl md:text-2xl">
             ₹{stats.totalBalance.toFixed(2) || 0}
           </p>
         </div>
@@ -235,7 +235,7 @@ function Dashboard() {
           <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
             Income (This Month)
           </h3>
-          <p className="text-2xl font-semibold text-green-500">
+          <p className="font-semibold text-green-500 lg:text-2xl md:text-2xl">
             ₹{stats.incomeThisMonth.toFixed(2) || 0}
           </p>
         </div>
@@ -244,7 +244,7 @@ function Dashboard() {
           <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
             Expenses (This Month)
           </h3>
-          <p className="text-2xl font-semibold text-red-500">
+          <p className="font-semibold text-red-500 lg:text-2xl md:text-2xl">
             ₹{stats.expenseThisMonth.toFixed(2) || 0}
           </p>
         </div>
@@ -253,7 +253,7 @@ function Dashboard() {
           <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
             Savings (This Month)
           </h3>
-          <p className="text-2xl font-semibold text-blue-500">
+          <p className="font-semibold text-blue-500 lg:text-2xl md:text-2xl">
             ₹ {(stats.incomeThisMonth - stats.expenseThisMonth).toFixed(2) || 0}
           </p>
         </div>
@@ -390,54 +390,14 @@ function Dashboard() {
       )}
 
       {/* Recent Transactions */}
-      {/* <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
-          Recent Transactions
-        </h3>
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-gray-500 dark:text-gray-400">
-              <th className="p-2">Date</th>
-              <th className="p-2">Description</th>
-              <th className="p-2">Category</th>
-              <th className="p-2">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((t) => (
-              <tr
-                key={t.id}
-                className="border-t border-gray-200 dark:border-gray-700"
-              >
-                <td className="p-2 text-gray-900 dark:text-gray-100">
-                  {new Date(t.createdAt).toLocaleDateString()}
-                </td>
-                <td className="p-2 text-gray-900 dark:text-gray-100">
-                  {t.description}
-                </td>
-                <td className="p-2 text-gray-900 dark:text-gray-100">
-                  {t.category}
-                </td>
-                <td
-                  className={`p-2 ${
-                    t.type === "income" ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {t.type === "income" ? "+" : "-"}₹{t.amount}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div> */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
         <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
           Recent Transactions
         </h3>
 
         {/* Make table horizontally scrollable */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm md:text-base">
+          <table className="w-full text-xs md:text-base">
             <thead>
               <tr className="text-left text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                 <th className="p-3">Date</th>

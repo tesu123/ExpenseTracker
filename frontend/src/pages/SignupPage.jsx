@@ -84,7 +84,7 @@ function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       {!showOtpInput && (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
           {/* Title */}

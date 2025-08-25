@@ -10,6 +10,13 @@ function Transactions() {
   const [loading, setLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null); // store transaction to delete
 
+  const [editTarget, setEditTarget] = useState(null); // ✅ store transaction for editing
+  const [editForm, setEditForm] = useState({
+    amount: "",
+    category: "",
+    description: "",
+  });
+
   // ✅ Fetch incomes & expenses
   const fetchTransactions = async () => {
     try {
@@ -73,6 +80,56 @@ function Transactions() {
     } finally {
       setLoading(false);
       setDeleteTarget(null); // close modal
+    }
+  };
+
+  // ✅ Open Edit Modal
+  const openEdit = (transaction) => {
+    setEditTarget(transaction);
+    setEditForm({
+      amount: transaction.amount,
+      category: transaction.category,
+      description: transaction.description,
+    });
+  };
+
+  // ✅ Handle Edit Submit
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editTarget) return;
+
+    try {
+      setLoading(true);
+      const endpoint =
+        editTarget.type === "Income"
+          ? `${ApiUrl}/income/edit-income/${editTarget.id}`
+          : `${ApiUrl}/expense/edit-expense/${editTarget.id}`;
+
+      const res = await axios.put(
+        endpoint,
+        { ...editForm },
+        { withCredentials: true }
+      );
+
+      toast.success(`${editTarget.type} updated successfully`);
+
+      const updatedTransaction = res.data.data;
+
+      // ✅ Update local state with backend response
+      setTransactions((prev) =>
+        prev.map((t) =>
+          t.id === editTarget.id
+            ? { ...updatedTransaction, type: editTarget.type }
+            : t
+        )
+      );
+
+      setEditTarget(null);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update transaction");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,7 +248,10 @@ function Transactions() {
                       {t.type}
                     </td>
                     <td className="p-3 space-x-2">
-                      <button className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium">
+                      <button
+                        onClick={() => openEdit(t)}
+                        className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
+                      >
                         Edit
                       </button>
                       <button
@@ -236,6 +296,64 @@ function Transactions() {
                 {loading ? "Deleting..." : "Delete"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Edit Modal */}
+      {editTarget && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-80">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Edit {editTarget.type}
+            </h3>
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              <input
+                type="number"
+                placeholder="Amount"
+                value={editForm.amount}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, amount: e.target.value })
+                }
+                className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Category"
+                value={editForm.category}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, category: e.target.value })
+                }
+                className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Description"
+                value={editForm.description}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, description: e.target.value })
+                }
+                className="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+              />
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setEditTarget(null)}
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+                  disabled={loading}
+                >
+                  {loading ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

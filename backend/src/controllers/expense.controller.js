@@ -16,6 +16,29 @@ export const addExpense = async (req, res, next) => {
       throw new ApiError(400, "Amount and Category are required");
     }
 
+    // 🔹 Calculate current balance (Income - Expense)
+    const incomeSum = await prisma.income.aggregate({
+      _sum: { amount: true },
+      where: { userId },
+    });
+
+    const expenseSum = await prisma.expense.aggregate({
+      _sum: { amount: true },
+      where: { userId },
+    });
+
+    const currentBalance =
+      (incomeSum._sum.amount || 0) - (expenseSum._sum.amount || 0);
+
+    // 🔹 Check if expense exceeds balance
+    if (parseFloat(amount) > currentBalance) {
+      throw new ApiError(
+        400,
+        `Expense amount exceeds available balance. Current Balance: ${currentBalance}`
+      );
+    }
+
+    // 🔹 Add Expense
     const expense = await prisma.expense.create({
       data: {
         amount: parseFloat(amount),
@@ -114,6 +137,66 @@ export const deleteExpense = async (req, res, next) => {
     return res
       .status(200)
       .json(new ApiResponse(200, null, "Expense deleted successfully"));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ✏️ Edit Expense
+export const editExpense = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { amount, category, description } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized - User not found");
+    }
+
+    // 🔹 Find existing expense
+    const expense = await prisma.expense.findUnique({ where: { id } });
+
+    if (!expense || expense.userId !== userId) {
+      throw new ApiError(404, "Expense not found or unauthorized");
+    }
+
+    // 🔹 Recalculate balance (Income - Expense excluding this expense)
+    const incomeSum = await prisma.income.aggregate({
+      _sum: { amount: true },
+      where: { userId },
+    });
+
+    const expenseSum = await prisma.expense.aggregate({
+      _sum: { amount: true },
+      where: { userId, NOT: { id } }, // exclude this expense from total
+    });
+
+    const currentBalance =
+      (incomeSum._sum.amount || 0) - (expenseSum._sum.amount || 0);
+
+    // 🔹 If amount is updated, check balance
+    if (amount && parseFloat(amount) > currentBalance) {
+      throw new ApiError(
+        400,
+        `Updated expense amount exceeds available balance. Current Balance: ${currentBalance}`
+      );
+    }
+
+    // 🔹 Update expense
+    const updatedExpense = await prisma.expense.update({
+      where: { id },
+      data: {
+        amount: amount ? parseFloat(amount) : expense.amount,
+        category: category || expense.category,
+        description: description ?? expense.description,
+      },
+    });
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedExpense, "Expense updated successfully")
+      );
   } catch (error) {
     next(error);
   }
