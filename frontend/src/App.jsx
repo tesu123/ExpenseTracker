@@ -2,7 +2,7 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
@@ -16,11 +16,11 @@ import {
   Analytics,
   Dashboard,
   Transactions,
-  LandingPage, // if you use LandingLayout, keep that import instead
+  LandingPage,
   LoginPage,
   SignupPage,
   Settings,
-  LandingLayout, // keep if you want this as landing
+  LandingLayout,
 } from "./pages";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -101,7 +101,7 @@ function App() {
   return (
     <>
       {/* single, global toaster */}
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
 
       <Routes>
         {/* Wait for auth to resolve before any route renders */}

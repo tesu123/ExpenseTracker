@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import Logo from "../assets/Zuno.png";
@@ -8,14 +8,20 @@ const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null); // store transaction to delete
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [editTarget, setEditTarget] = useState(null);
 
-  const [editTarget, setEditTarget] = useState(null); // ✅ store transaction for editing
   const [editForm, setEditForm] = useState({
     amount: "",
     category: "",
     description: "",
   });
+
+  // 🔎 Filters
+  const [dateFilter, setDateFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [searchText, setSearchText] = useState("");
+  const [categories, setCategories] = useState([]);
 
   // ✅ Fetch incomes & expenses
   const fetchTransactions = async () => {
@@ -46,6 +52,10 @@ function Transactions() {
       );
 
       setTransactions(merged);
+
+      // ✅ Extract unique categories dynamically
+      const uniqueCats = [...new Set(merged.map((t) => t.category))];
+      setCategories(uniqueCats);
     } catch (error) {
       console.error(error);
       toast.error("Failed to fetch transactions");
@@ -54,15 +64,57 @@ function Transactions() {
     }
   };
 
-  // ✅ Confirm Delete
-  const confirmDelete = (transaction) => {
-    setDeleteTarget(transaction);
+  // ✅ Filters applied
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((t) => {
+      const matchDate = dateFilter
+        ? new Date(t.createdAt).toISOString().split("T")[0] === dateFilter
+        : true;
+
+      const matchCategory =
+        categoryFilter === "All" ? true : t.category === categoryFilter;
+
+      const matchText = searchText
+        ? t.description?.toLowerCase().includes(searchText.toLowerCase())
+        : true;
+
+      return matchDate && matchCategory && matchText;
+    });
+  }, [transactions, dateFilter, categoryFilter, searchText]);
+
+  // ✅ Export CSV
+  const exportCSV = () => {
+    if (filteredTransactions.length === 0) {
+      toast.error("No transactions to export");
+      return;
+    }
+
+    const header = ["Date", "Description", "Category", "Amount", "Type"];
+    const rows = filteredTransactions.map((t) => [
+      new Date(t.createdAt).toLocaleDateString(),
+      t.description,
+      t.category,
+      t.amount,
+      t.type,
+    ]);
+
+    const csvContent = [header, ...rows].map((row) => row.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "transactions.csv";
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
-  // ✅ Handle delete after confirmation
+  // ✅ Delete flow
+  const confirmDelete = (transaction) => setDeleteTarget(transaction);
+
   const handleDelete = async () => {
     if (!deleteTarget) return;
-
     try {
       setLoading(true);
       await axios.delete(
@@ -71,7 +123,6 @@ function Transactions() {
         }/delete-${deleteTarget.type.toLowerCase()}/${deleteTarget.id}`,
         { withCredentials: true }
       );
-
       toast.success(`${deleteTarget.type} deleted successfully`);
       setTransactions((prev) => prev.filter((t) => t.id !== deleteTarget.id));
     } catch (error) {
@@ -79,11 +130,11 @@ function Transactions() {
       toast.error("Failed to delete transaction");
     } finally {
       setLoading(false);
-      setDeleteTarget(null); // close modal
+      setDeleteTarget(null);
     }
   };
 
-  // ✅ Open Edit Modal
+  // ✅ Edit flow
   const openEdit = (transaction) => {
     setEditTarget(transaction);
     setEditForm({
@@ -93,11 +144,9 @@ function Transactions() {
     });
   };
 
-  // ✅ Handle Edit Submit
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     if (!editTarget) return;
-
     try {
       setLoading(true);
       const endpoint =
@@ -105,17 +154,13 @@ function Transactions() {
           ? `${ApiUrl}/income/edit-income/${editTarget.id}`
           : `${ApiUrl}/expense/edit-expense/${editTarget.id}`;
 
-      const res = await axios.put(
-        endpoint,
-        { ...editForm },
-        { withCredentials: true }
-      );
+      const res = await axios.put(endpoint, editForm, {
+        withCredentials: true,
+      });
 
       toast.success(`${editTarget.type} updated successfully`);
-
       const updatedTransaction = res.data.data;
 
-      // ✅ Update local state with backend response
       setTransactions((prev) =>
         prev.map((t) =>
           t.id === editTarget.id
@@ -152,49 +197,58 @@ function Transactions() {
     }
   };
 
-  // Custom Logo Spinner
+  // 🔄 Loading Spinner
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
-        {/* Logo */}
         <img src={Logo} alt="Loading Logo" className="w-20 h-20" />
-
-        {/* Spinner */}
         <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 p-0">
+    <div className="min-h-screen bg-white dark:bg-gray-900 p-4">
       <Toaster position="top-right" />
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Transactions
         </h2>
 
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-4 md:p-6">
           {/* Filters */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <div className="flex flex-col lg:flex-row justify-between items-stretch md:items-center mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
               <input
                 type="date"
-                className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
               />
-              <select className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100">
-                <option>All Categories</option>
-                <option>Food</option>
-                <option>Transport</option>
-                <option>Entertainment</option>
-                <option>Salary</option>
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
+              >
+                <option value="All">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
               <input
                 type="text"
                 placeholder="Search..."
-                className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
               />
             </div>
-            <button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg">
+            <button
+              onClick={exportCSV}
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg self-end lg:self-auto"
+            >
               Export CSV
             </button>
           </div>
@@ -213,7 +267,7 @@ function Transactions() {
                 </tr>
               </thead>
               <tbody>
-                {transactions.map((t) => (
+                {filteredTransactions.map((t) => (
                   <tr
                     key={t.id}
                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
@@ -263,6 +317,16 @@ function Transactions() {
                     </td>
                   </tr>
                 ))}
+                {filteredTransactions.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-6 text-gray-500 dark:text-gray-400"
+                    >
+                      No transactions found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

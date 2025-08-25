@@ -47,16 +47,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     setIsLoggingOut(true);
     try {
       await axios.post(`${ApiUrl}/users/logout`, {}, { withCredentials: true });
-
       dispatch(logout());
       navigate("/");
+      // toast.success("Logged out successfully");
     } catch (err) {
       toast.error("Error logging out");
     } finally {
       setIsLoggingOut(false);
     }
   };
-
 
   return (
     <>

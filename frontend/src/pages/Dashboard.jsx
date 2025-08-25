@@ -215,7 +215,7 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-0">
-      {/* <Toaster position="top-right" /> */}
+      <Toaster position="top-right" />
       <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
         Dashboard
       </h2>

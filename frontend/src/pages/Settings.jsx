@@ -99,7 +99,7 @@ const Settings = () => {
 
   return (
     <div className="p-1">
-      {/* <Toaster position="top-right" /> */}
+      <Toaster position="top-right" />
       <h2 className="text-3xl font-bold mb-6">Settings</h2>
 
       <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg max-w-2xl mx-auto space-y-8">

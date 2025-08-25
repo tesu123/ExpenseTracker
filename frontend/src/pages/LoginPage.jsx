@@ -38,11 +38,11 @@ function LoginPage() {
       )
       .then((res) => {
         // console.log(res);
-
+        toast.success("Successfully logged in");
         dispatch(login(res.data.data.user));
         setEmail("");
         setPassword("");
-        toast.success("Successfully logged in");
+
         navigate("/dashboard");
       })
       .catch(() => {
@@ -59,7 +59,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      {/* <Toaster position="top-right" /> */}
+      <Toaster position="top-right" />
       {(!showForgotPassword || resetPasswordSuccess) && (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
           {/* Title */}
