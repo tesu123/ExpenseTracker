@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import OTPInput from "../components/OTPInput.jsx";
 import { ForgotPassword } from "../components";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { ResetPassword } from "../components";
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -59,13 +59,14 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       {(!showForgotPassword || resetPasswordSuccess) && (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
           {/* Title */}
           <h1 className="text-2xl font-bold text-center mb-6">
-            <span className="text-purple-600">Expense</span>
-            <span className="text-black dark:text-white">Track</span>
+            <h1 className="text-2xl md:text-3xl font-bold text-purple-600">
+              Zuno
+            </h1>
           </h1>
 
           {/* Form */}

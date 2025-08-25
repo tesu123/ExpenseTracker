@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Users, Crown, Book } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Logo from "../assets/Zuno.png";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -215,7 +215,7 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-0">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
         Dashboard
       </h2>
@@ -263,13 +263,13 @@ function Dashboard() {
       <div className="flex justify-center md:justify-center lg:justify-end gap-4 mb-8">
         <button
           onClick={() => setShowIncomeForm(true)}
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow transition cursor-pointer"
         >
           Add Income
         </button>
         <button
           onClick={() => setShowExpenseForm(true)}
-          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow transition"
+          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow transition cursor-pointer"
         >
           Add Expense
         </button>
@@ -314,14 +314,14 @@ function Dashboard() {
                 <button
                   type="button"
                   onClick={() => setShowIncomeForm(false)}
-                  className="px-4 py-2 rounded bg-red-500 hover:bg-red-700"
+                  className="px-4 py-2 rounded bg-red-500 hover:bg-red-700 cursor-pointer"
                   disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-700"
+                  className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-700 cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? "Adding..." : "Add"}
@@ -371,14 +371,14 @@ function Dashboard() {
                 <button
                   type="button"
                   onClick={() => setShowExpenseForm(false)}
-                  className="px-4 py-2 rounded bg-red-500 hover:bg-red-700"
+                  className="px-4 py-2 rounded bg-red-500 hover:bg-red-700 cursor-pointer"
                   disabled={loading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-700"
+                  className="px-4 py-2 rounded bg-green-500 text-white hover:bg-green-700 cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? "Adding..." : "Add"}

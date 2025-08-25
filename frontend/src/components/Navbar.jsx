@@ -12,8 +12,11 @@ const Navbar = ({ toggleSidebar }) => {
       </button>
 
       {/* Title */}
-      <h1 className="text-xl font-bold text-purple-600 dark:text-purple-400">
-        Expense Tracker
+      {/* <h1 className="text-xl font-bold text-purple-600 dark:text-purple-400">
+        Zuno
+      </h1> */}
+      <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text animate-pulse tracking-wide">
+        Zuno
       </h1>
     </div>
   );

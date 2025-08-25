@@ -58,7 +58,7 @@ function ForgotPassword({ setSuccess, setResetPasswordEmail }) {
           className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md transition cursor-pointer"
           disabled={loading}
         >
-          Continue
+          {loading ? "Continuing..." : "Continue"}
         </button>
       </form>
     </div>

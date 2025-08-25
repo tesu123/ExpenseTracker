@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import Logo from "../assets/Zuno.png";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
@@ -206,10 +206,10 @@ function Transactions() {
       </div>
     );
   }
-
+  const today = new Date().toISOString().split("T")[0];
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-4">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white">
           Transactions
@@ -221,14 +221,14 @@ function Transactions() {
             <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
               <input
                 type="date"
-                value={dateFilter}
+                value={dateFilter || today}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
+                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100 cursor-pointer"
               />
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100"
+                className="flex-1 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 p-2 rounded-lg text-gray-900 dark:text-gray-100 cursor-pointer"
               >
                 <option value="All">All Categories</option>
                 {categories.map((cat) => (
@@ -247,7 +247,7 @@ function Transactions() {
             </div>
             <button
               onClick={exportCSV}
-              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg self-end lg:self-auto"
+              className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg self-end lg:self-auto cursor-pointer"
             >
               Export CSV
             </button>
@@ -304,13 +304,13 @@ function Transactions() {
                     <td className="p-3 space-x-2">
                       <button
                         onClick={() => openEdit(t)}
-                        className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
+                        className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium cursor-pointer"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => confirmDelete(t)}
-                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium cursor-pointer"
                       >
                         Delete
                       </button>
@@ -348,13 +348,13 @@ function Transactions() {
             <div className="flex justify-end space-x-4">
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200"
+                className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg cursor-pointer"
                 disabled={loading}
               >
                 {loading ? "Deleting..." : "Delete"}
@@ -405,13 +405,13 @@ function Transactions() {
                 <button
                   type="button"
                   onClick={() => setEditTarget(null)}
-                  className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200"
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-800 dark:text-gray-200 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Save"}

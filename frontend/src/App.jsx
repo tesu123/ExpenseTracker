@@ -101,7 +101,7 @@ function App() {
   return (
     <>
       {/* single, global toaster */}
-      {/* <Toaster position="top-right" /> */}
+      <Toaster position="top-right" />
 
       <Routes>
         {/* Wait for auth to resolve before any route renders */}

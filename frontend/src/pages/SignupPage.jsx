@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { OTPInput } from "../components";
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 import { Eye, EyeOff } from "lucide-react";
@@ -89,8 +89,9 @@ function SignupPage() {
         <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md w-80 max-w-md">
           {/* Title */}
           <h1 className="text-2xl font-bold text-center mb-6">
-            <span className="text-purple-600">Expense</span>
-            <span className="text-black dark:text-white">Track</span>
+            <h1 className="text-2xl md:text-3xl font-bold text-purple-600">
+              Zuno
+            </h1>
           </h1>
 
           {/* Form */}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Pencil, X } from "lucide-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import axios from "axios";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -99,7 +99,7 @@ const Settings = () => {
 
   return (
     <div className="p-1">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       <h2 className="text-3xl font-bold mb-6">Settings</h2>
 
       <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg max-w-2xl mx-auto space-y-8">
@@ -116,7 +116,7 @@ const Settings = () => {
                 setIsEditingProfile(false);
                 setName({ name: "" });
               }}
-              className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+              className="absolute top-0 right-0 text-red-500 hover:text-red-700 cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -124,7 +124,7 @@ const Settings = () => {
             <button
               type="button"
               onClick={() => setIsEditingProfile(true)}
-              className="absolute top-0 right-0 text-purple-500 hover:text-purple-700"
+              className="absolute top-0 right-0 text-purple-500 hover:text-purple-700 cursor-pointer"
             >
               <Pencil size={20} />
             </button>
@@ -177,7 +177,7 @@ const Settings = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg"
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? "Saving..." : "Save Profile"}
@@ -205,7 +205,7 @@ const Settings = () => {
                 setShowPassword(false);
                 setNewShowPassword(false);
               }}
-              className="absolute top-0 right-0 text-red-500 hover:text-red-700"
+              className="absolute top-0 right-0 text-red-500 hover:text-red-700 cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -213,7 +213,7 @@ const Settings = () => {
             <button
               type="button"
               onClick={() => setIsEditingPassword(true)}
-              className="absolute top-0 right-0 text-purple-500 hover:text-purple-700"
+              className="absolute top-0 right-0 text-purple-500 hover:text-purple-700 cursor-pointer"
             >
               <Pencil size={20} />
             </button>
@@ -298,7 +298,7 @@ const Settings = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg"
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? "Changing..." : "Change password"}
