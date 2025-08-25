@@ -201,17 +201,17 @@ function Dashboard() {
   };
 
   // // Custom Logo Spinner
-  // if (loadingScreen) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
-  //       {/* Logo */}
-  //       <img src={Logo} alt="Loading Logo" className="w-20 h-20" />
+  if (loadingScreen) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
+        {/* Logo */}
+        <img src={Logo} alt="Loading Logo" className="w-20 h-20" />
 
-  //       {/* Spinner */}
-  //       <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
-  //     </div>
-  //   );
-  // }
+        {/* Spinner */}
+        <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 p-0">

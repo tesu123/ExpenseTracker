@@ -1,149 +1,136 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Toaster } from "react-hot-toast";
+
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
+import Logo from "./assets/Zuno.png";
+
+import { login, logout } from "./features/auth/authSlice";
+import { PublicRoute, ProtectedRoute } from "./components";
 
 import {
   AboutUs,
   Analytics,
   Dashboard,
   Transactions,
-  LandingPage,
+  LandingPage, // if you use LandingLayout, keep that import instead
   LoginPage,
   SignupPage,
   Settings,
-  LandingLayout,
+  LandingLayout, // keep if you want this as landing
 } from "./pages";
-
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { login, logout } from "./features/auth/authSlice";
-import { useDispatch } from "react-redux";
-import { Toaster } from "react-hot-toast";
-import Logo from "./assets/Zuno.png";
-
-import { PublicRoute, ProtectedRoute } from "./components";
 
 const ApiUrl = import.meta.env.VITE_BACKEND_URL;
 
-function App() {
+/* ---------- AuthGate: wait for current-user before rendering routes ---------- */
+function AuthGate() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(
-    () => window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get(`${ApiUrl}/users/current-user`, { withCredentials: true })
-      .then((res) => {
+    (async () => {
+      try {
+        const res = await axios.get(`${ApiUrl}/users/current-user`, {
+          withCredentials: true,
+        });
         dispatch(login(res.data.data));
-        // navigate("/dashbaord");
-      })
-      .catch(() => {
+      } catch {
         dispatch(logout());
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+      } finally {
+        setChecking(false);
+      }
+    })();
+  }, [dispatch]);
 
-  // Apply dark mode class to <html>
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
-
-  // Listen for system theme changes
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    const handleChange = (e) => {
-      setDarkMode(e.matches);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  //Custom Logo Spinner
-  if (loading) {
+  if (checking) {
     return (
       <div className="flex flex-col items-center justify-center h-[100vh] w-full space-y-6">
-        {/* Logo */}
         <img src={Logo} alt="Loading Logo" className="w-20 h-20" />
-
-        {/* Spinner */}
         <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
+  return <Outlet />;
+}
+
+/* ---------- AppLayout: sidebar + navbar + page outlet ---------- */
+function AppLayout({ darkMode, setDarkMode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setSidebarOpen((s) => !s);
+
+  return (
+    <div className="flex h-screen dark:bg-gray-900">
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className="flex-1 flex flex-col overflow-auto">
+        <Navbar
+          toggleSidebar={toggleSidebar}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
+        <div className="flex-1 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white overflow-auto scrollbar-none">
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [darkMode, setDarkMode] = useState(
+    () => window.matchMedia("(prefers-color-scheme: dark)").matches
+  );
+
+  // apply/remove dark class
+  useEffect(() => {
+    const el = document.documentElement;
+    darkMode ? el.classList.add("dark") : el.classList.remove("dark");
+  }, [darkMode]);
+
+  // watch system preference changes
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e) => setDarkMode(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <>
+      {/* single, global toaster */}
       <Toaster position="top-right" />
+
       <Routes>
-        {/* Public Pages */}
-        <Route path="/" element={<LandingLayout />} />
-        <Route path="/login" element={<PublicRoute />}>
-          <Route path="" element={<LoginPage />} />
+        {/* Wait for auth to resolve before any route renders */}
+        <Route element={<AuthGate />}>
+          {/* Public (only when logged out) */}
+          <Route element={<PublicRoute />}>
+            <Route path="/" element={<LandingLayout />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+          </Route>
+
+          {/* Protected app */}
+          <Route element={<ProtectedRoute />}>
+            <Route
+              element={
+                <AppLayout darkMode={darkMode} setDarkMode={setDarkMode} />
+              }
+            >
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/about-us" element={<AboutUs />} />
+            </Route>
+          </Route>
+
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
-
-        <Route path="/signup" element={<PublicRoute />}>
-          <Route path="" element={<SignupPage />} />
-        </Route>
-
-        {/* Main App Layout */}
-        <Route
-          path="/*"
-          element={
-            <div className="flex h-screen dark:bg-gray-900">
-              {/* Sidebar */}
-              <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-
-              {/* Main Content */}
-              <div className="flex-1 flex flex-col overflow-auto">
-                <Navbar
-                  toggleSidebar={toggleSidebar}
-                  darkMode={darkMode}
-                  setDarkMode={setDarkMode}
-                />
-
-                <div className="flex-1 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white overflow-auto scrollbar-none">
-                  <Routes>
-                    <Route path="/dashboard" element={<ProtectedRoute />}>
-                      <Route path="" element={<Dashboard />} />
-                    </Route>
-
-                    <Route path="/transactions" element={<ProtectedRoute />}>
-                      <Route path="" element={<Transactions />} />
-                    </Route>
-
-                    <Route path="/analytics" element={<ProtectedRoute />}>
-                      <Route path="" element={<Analytics />} />
-                    </Route>
-
-                    <Route path="/settings" element={<ProtectedRoute />}>
-                      <Route path="" element={<Settings />} />
-                    </Route>
-
-                    <Route path="/about-us" element={<ProtectedRoute />}>
-                      <Route path="" element={<AboutUs />} />
-                    </Route>
-                  </Routes>
-                </div>
-              </div>
-            </div>
-          }
-        />
       </Routes>
     </>
   );

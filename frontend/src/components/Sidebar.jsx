@@ -57,22 +57,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     }
   };
 
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
-  //Custom Logo Spinner
-  // if (!user) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center h-[80vh] space-y-6">
-  //       {/* Logo */}
-  //       <img src={Logo} alt="Loading Logo" className="w-20 h-20" />
-
-  //       {/* Spinner */}
-  //       <div className="w-12 h-12 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
