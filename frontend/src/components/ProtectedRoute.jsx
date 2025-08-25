@@ -2,13 +2,13 @@ import React from "react";
 import { Outlet, Navigate } from "react-router-dom"; // <-- FIXED
 import { useSelector } from "react-redux";
 
-const AuthenticatedRoute = ({}) => {
+const ProtectedRoute = ({}) => {
   const isLoggedIn = useSelector((state) => state.auth.status);
 
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" />;
   }
   return <Outlet />;
 };
 
-export default AuthenticatedRoute;
+export default ProtectedRoute;
