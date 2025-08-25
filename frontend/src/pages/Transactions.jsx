@@ -212,7 +212,7 @@ function Transactions() {
       {/* ✅ Confirmation Modal */}
       {deleteTarget && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-96">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-80">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Confirm Delete
             </h3>
