@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Users, Crown, Book } from "lucide-react";
 import toast from "react-hot-toast";
 import Logo from "../assets/Zuno.png";
 

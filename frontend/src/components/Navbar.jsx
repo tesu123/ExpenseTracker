@@ -16,7 +16,7 @@ const Navbar = ({ toggleSidebar }) => {
         Zuno
       </h1> */}
       <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-500 text-transparent bg-clip-text animate-pulse tracking-wide">
-        Zuno
+        Monetrix
       </h1>
     </div>
   );

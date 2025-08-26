@@ -7,14 +7,14 @@ const AboutUs = () => {
       {/* About Section */}
       <div className="max-w-5xl mx-auto text-center mb-16">
         <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 tracking-tight">
-          About <span className="text-purple-600">Zuno</span>
+          About <span className="text-purple-600">Monetrix</span>
         </h1>
         <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
-          <span className="font-semibold text-purple-600">Zuno</span> is an
+          <span className="font-semibold text-purple-600">Monetrix</span> is an
           personal finance companion built to simplify money management. It
           empowers you to track your monthly expenses, monitor income, and set
-          meaningful goals — all within a clean, intuitive interface. With Zuno,
-          financial freedom feels effortless and achievable.
+          meaningful goals — all within a clean, intuitive interface. With
+          Monetrix, financial freedom feels effortless and achievable.
         </p>
       </div>
 

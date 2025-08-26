@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import expense from "../assets/expense.png";
 
 function LandingPage() {
   return (
@@ -8,7 +7,7 @@ function LandingPage() {
       <header className="w-full bg-white dark:bg-gray-800 shadow">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           <h1 className="text-2xl md:text-3xl font-bold text-purple-600">
-            Zuno
+            Monetrix
           </h1>
           {/* Log In and Sign Up buttons */}
           <nav className="flex gap-4">
@@ -38,8 +37,9 @@ function LandingPage() {
               Your Money
             </h2>
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-lg mx-auto md:mx-0">
-              Effortlessly manage your finances with Zuno that helps you stay in
-              control.
+              Effortlessly manage your finances with{" "}
+              <span className="font-semibold text-purple-500">Monetrix</span>{" "}
+              that helps you stay in control.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <Link

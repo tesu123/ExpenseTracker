@@ -7,7 +7,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
         {/* Copyright */}
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          © {new Date().getFullYear()} Zuno. All rights reserved.
+          © {new Date().getFullYear()} Monetrix. All rights reserved.
         </p>
 
         {/* Social Links */}
